@@ -32,37 +32,3 @@ app.whenReady().then(() => {
 app.on('window-all-closed', function () {
     if (process.platform !== 'darwin') app.quit()
 })
-
-ipcMain.on("login", (event, data) => {
-    Authenticator.getAuth(data.u, data.p).then(() => {
-        event.sender.send("done")
-        let opts = {
-            clientPackage: null,
-            authorization: Authenticator.getAuth(data.u, data.p),
-            root: "C:/Users/Fir3/Desktop/Modpack",
-            version: {
-                number: "1.12.2",
-                type: "release"
-            },
-            forge: "C:/Users/Fir3/Desktop/Modpack/forge.jar",
-            memory: {
-                max: "6000",
-                min: "4000"
-            }
-        }
-
-        launcher.launch(opts);
-
-        launcher.on('debug', (e) => console.log(e));
-        launcher.on('data', (e) => {
-            console.log(e);
-            mainWindow.hide();
-        });
-        launcher.on('progress', (e) => {
-            console.log(e);
-            event.sender.send("progression", e)
-        });
-    }).catch((err) => {
-        event.sender.send("err", { er: err })
-    })
-})
